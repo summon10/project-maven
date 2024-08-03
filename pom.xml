@@ -13,13 +13,6 @@
         <maven.compiler.target>18</maven.compiler.target>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>localrep</id>
-            <name>local repository</name>
-            <url>file:${project.basedir}/lib</url>
-        </repository>
-    </repositories>
     <dependencies>
         <dependency>
             <groupId>com.javarush</groupId>
@@ -41,10 +34,18 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.8.2</version>
+            <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${project.build.directory}/dep</directory>
+                <targetPath>libraries</targetPath>
+            </resource>
+        </resources>
         <plugins>
             <!-- Usual compilation -->
             <plugin>
@@ -69,29 +70,25 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
                 <version>3.1.1</version>
-                <configuration>
 
-                </configuration>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-
                 <configuration>
-                    <includes>
-                        <include>**/lib/*</include>
-                    </includes>
                     <archive>
-                        <manifestFile>src/main/java/META-INF/MANIFEST.MF</manifestFile>
-                        <manifestEntries>
+                        <manifest>
                             <addClasspath>true</addClasspath>
                             <mainClass>org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader</mainClass>
-                            <Rsrc-Class-Path>com.javarush.games.racer.RacerGame</Rsrc-Class-Path>
+                            <classpathPrefix>libraries/</classpathPrefix>
+                        </manifest>
+                        <manifestEntries>
+                                <Rsrc-Main-Class>com.javarush.games.racer.RacerGame</Rsrc-Main-Class>
+                                <Class-Path>./</Class-Path>
                         </manifestEntries>
+
                     </archive>
-
-
                 </configuration>
                 <version>3.3.0</version>
             </plugin>
@@ -100,12 +97,29 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
                 <configuration>
-                    <includes>
-                        <include>test/java/com.javarush.games.racer.DirectionTest</include>
-                        <include>test/java/com.javarush.games.racer.FinishLineTest</include>
-
-                    </includes>
+                    <excludes>
+                        <exclude>StrangeTest</exclude>
+                    </excludes>
                 </configuration>
+
+            </plugin>
+
+                       <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.7.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/dep/</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
