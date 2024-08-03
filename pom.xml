@@ -20,7 +20,6 @@
             <url>file:${project.basedir}/lib</url>
         </repository>
     </repositories>
-
     <dependencies>
         <dependency>
             <groupId>com.javarush</groupId>
@@ -81,11 +80,31 @@
 
                 <configuration>
                     <includes>
-                        <include>*</include>
+                        <include>**/lib/*</include>
                     </includes>
                     <archive>
                         <manifestFile>src/main/java/META-INF/MANIFEST.MF</manifestFile>
+                        <manifestEntries>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader</mainClass>
+                            <Rsrc-Class-Path>com.javarush.games.racer.RacerGame</Rsrc-Class-Path>
+                        </manifestEntries>
                     </archive>
+
+
+                </configuration>
+                <version>3.3.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <includes>
+                        <include>test/java/com.javarush.games.racer.DirectionTest</include>
+                        <include>test/java/com.javarush.games.racer.FinishLineTest</include>
+
+                    </includes>
                 </configuration>
             </plugin>
         </plugins>
